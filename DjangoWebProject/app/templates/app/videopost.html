@@ -1,0 +1,16 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+<hr />
+<div>
+    <h2>История кампании</h2>
+    <VIDEO src="{% static 'app/content/video1.mp4' %}" controls="controls" width="600" height="450" poster="{% static 'app/content/poster1.jpg' %}"></VIDEO>
+    <h2>Успехи кампании</h2>
+    <VIDEO src="{% static 'app/content/video2.mp4' %}" controls="controls" width="600" height="450" poster="{% static 'app/content/poster2.jpg' %}"></VIDEO>
+</div>
+
+<style></style>
+{% endblock %}

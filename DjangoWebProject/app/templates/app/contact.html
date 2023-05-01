@@ -1,0 +1,100 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h1 class="title">{{ title }}</h1>
+<h3 class="message">{{ message }}</h3>
+
+<section class="address-section">
+    <h2 class="address-heading">Адрес</h2>
+    <p>Мы находимся по адресу:</p>
+    <address class="address-details">
+        <strong>Xiaomi</strong><br>
+        ул. Октябрьская, 29<br>
+        Москва, 123100<br>
+        Россия
+    </address>
+</section>
+
+<section class="phone-section">
+    <h2 class="phone-heading">Телефон</h2>
+    <p>Вы можете связаться с нами по телефону:</p>
+    <a href="tel:+74951234567" class="phone-number">+7 (495) 123-45-67</a>
+</section>
+
+<section class="email-section">
+    <h2 class="email-heading">Email</h2>
+    <p>Напишите нам на почту:</p>
+    <a href="mailto:info@xiaomi.com" class="email-address">info@xiaomi.com</a>
+</section>
+
+<style>
+    .address-section {
+        margin-bottom: 3rem;
+    }
+
+    .address-heading {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .address-details {
+        font-size: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .phone-section {
+        margin-bottom: 3rem;
+    }
+
+    .phone-heading {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .phone-number {
+        font-size: 1.5rem;
+        line-height: 1.5;
+        text-decoration: none;
+        color: #000;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        background-color: #f0f0f0;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .phone-number:hover {
+        background-color: #e0e0e0;
+    }
+
+    .email-section {
+        margin-bottom: 3rem;
+    }
+
+    .email-heading {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .email-address {
+        font-size: 1.5rem;
+        line-height: 1.5;
+        text-decoration: none;
+        color: #000;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        background-color: #f0f0f0;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .email-address:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+{% endblock %}

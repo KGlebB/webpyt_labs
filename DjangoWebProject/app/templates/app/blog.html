@@ -1,0 +1,92 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class="title">{{ title }}</h1>
+<br />
+<div class="posts">
+    {% for post in posts %}
+    <div class="posts__item">
+        <!--<hr class="posts__item-line"/>-->
+        <div class="posts__item-body">
+            <h2 class="posts__item-body-title">{{ post.title }}</h2>
+            <h4 class="posts__item-body-posted">{{ post.posted }}</h4>
+            <p class="posts__item-body-description">{{ post.description }}</p>
+        </div>
+        <a class="posts__item-body-open" href="{% url 'blogpost' parametr=post.id %}">ЧИТАТЬ ДАЛЕЕ</a>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .posts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 2rem;
+    }
+
+    .posts__item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: #fff;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .posts__item:hover {
+        transform: translateY(-10px);
+    }
+
+    .posts__item-line {
+        margin: 0;
+        border: none;
+        height: 1px;
+        background-color: #eee;
+    }
+
+    .posts__item-body {
+        padding: 1rem;
+    }
+
+    .posts__item-body-title {
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .posts__item-body-posted {
+        font-size: 1.5rem;
+        color: #999;
+        margin: 0;
+    }
+
+    .posts__item-body-description {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .posts__item-body-open {
+        height: 40px;
+        display: inline-block;
+        background-color: #e8a02d;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+        .posts__item-body-open:hover {
+            color: #fff;
+            background-color: #b77813;
+            text-decoration: none;
+        }
+
+    @media screen and (max-width: 768px) {
+        .posts {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

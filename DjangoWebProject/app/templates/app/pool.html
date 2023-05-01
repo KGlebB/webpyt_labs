@@ -1,0 +1,63 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="title">Обратная связь</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button id="submit-btn" type="submit">Отправить</button>
+</form>
+
+<script>
+    const grayFocus = (element) => {
+        element.addEventListener('focus', () => {
+            element.style.backgroundColor = 'lightgray';
+        });
+
+        element.addEventListener('blur', () => {
+            element.style.backgroundColor = '';
+        });
+    }
+
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submit-btn');
+    const inputs = document.querySelectorAll('input');
+    const textareas = document.querySelectorAll('textarea');
+
+    submitBtn.addEventListener('mouseover', () => {
+        submitBtn.style.color = 'white';
+        submitBtn.style.backgroundColor = 'darkblue';
+    });
+
+    submitBtn.addEventListener('mouseout', () => {
+        submitBtn.style.color = '';
+        submitBtn.style.backgroundColor = '';
+    });
+
+    inputs.forEach(input => grayFocus(input));
+    textareas.forEach(textarea => grayFocus(textarea));
+</script>
+
+<style>
+select {
+    padding: 10px;
+    border-radius: 5px;
+}
+option {
+    padding: 5px 0; 
+}
+input[type=checkbox] {
+    transform: scale(1.5);
+    padding: 10px;
+    margin: 3px;
+}
+input[type=radio] {
+    transform: scale(1.5);
+    padding: 10px;
+    margin: 3px;
+}
+</style>
+
+{% endblock %}

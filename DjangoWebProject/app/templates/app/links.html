@@ -1,0 +1,64 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="title">{{ title }}</h1>
+<h3 class="message">{{ message }}</h3>
+
+<ul class="links-list">
+    <li class="links-list__item">
+        <a class="links-list__item-url" href="https://vk.com/public165599758" target="_blank">
+            <img class="links-list__item-url-logo" src="{% static 'app/content/vk-logo.png' %}" alt="ВКонтакте" />
+        </a>
+    </li>
+    <li class="links-list__item">
+        <a class="links-list__item-url" href="https://t.me/micommrussia" target="_blank">
+            <img class="links-list__item-url-logo" src="{% static 'app/content/tg-logo.webp' %}" alt="Телеграмм" />
+        </a>
+    </li>
+    <li class="links-list__item">
+        <a class="links-list__item-url" href="http://ok.ru/xiaomirussia" target="_blank">
+            <img class="links-list__item-url-logo" src="{% static 'app/content/ok-logo.webp' %}" alt="Одноклассники" />
+        </a>
+    </li>
+</ul>
+
+<style>
+    .links-list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .links-list__item {
+        margin: 0 1.5rem;
+    }
+
+    .links-list__item-url {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 4rem;
+        width: 4rem;
+        border-radius: 50%;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .links-list__item-url-logo {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .links-list__item-url:hover {
+        transform: scale(1.2);
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+{% endblock %}

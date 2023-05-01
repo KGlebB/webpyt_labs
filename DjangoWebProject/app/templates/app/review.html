@@ -1,0 +1,34 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class="title">Спасибо за ваш отзыв!</h1>
+<h3>Вы сообщили о себе следующее:</h3>
+<ul class="list">
+    <li class="list-item"><strong class="label">Имя:</strong> {{ data.name }}</li>
+    <li class="list-item"><strong class="label">Электронная почта:</strong> {{ data.email }}</li>
+    <li class="list-item"><strong class="label">Пол:</strong> {{ data.gender }}</li>
+    <li class="list-item"><strong class="label">Есть продукция Xiaomi:</strong> {{ data.hasPhone }}</li>
+    <li class="list-item"><strong class="label">Оценка:</strong> {{ data.rating }}</li>
+    <li class="list-item"><strong class="label">Комментарий:</strong> {{ data.comment }}</li>
+</ul>
+
+<style>
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+.list-item {
+    margin-bottom: 0.5rem;
+}
+
+.label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+    color: #777;
+}
+</style>
+{% endblock %}
