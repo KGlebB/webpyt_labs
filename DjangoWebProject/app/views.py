@@ -3,7 +3,7 @@ Definition of views.
 """
 
 from datetime import datetime
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpRequest
 
 from.forms import FeedbackForm
@@ -11,7 +11,7 @@ from.forms import CommentForm
 from.forms import BlogForm
 from django.contrib.auth.forms import UserCreationForm
 
-from.models import Blog
+from.models import Blog, Category, Product
 from.models import Comment
 
 def home(request):
@@ -212,6 +212,42 @@ def newpost(request):
         {
             'blogform': blogform,
             'title': 'Добавить статью блога',
+            'year': datetime.now().year,
+        }
+    )
+
+def catalog(request):
+    categories = Category.objects.all()
+    return render(
+        request,
+        'app/catalog.html',
+        {
+            'categories': categories,
+            'title': 'Каталог',
+            'year': datetime.now().year,
+        }
+    )
+
+def category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category)
+    return render(
+        request,
+        'app/category.html',
+        {
+            'category': category,
+            'products': products,
+            'year': datetime.now().year,
+        }
+    )
+
+def product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(
+        request,
+        'app/product.html',
+        {
+            'product': product,
             'year': datetime.now().year,
         }
     )

@@ -37,6 +37,9 @@ urlpatterns = [
     path('registration', views.registration, name='registration'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('admin/', admin.site.urls),
+    path('catalog/', views.catalog, name='catalog'),
+    path('category/<int:category_id>/', views.category, name='category'),
+    path('product/<int:product_id>/', views.product, name='product'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

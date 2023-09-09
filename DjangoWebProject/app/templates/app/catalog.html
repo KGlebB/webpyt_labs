@@ -1,0 +1,53 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class="title">{{ title }}</h1>
+<ul class="category-list custom-category-list">
+    {% for category in categories %}
+        <a href="{% url 'category' category.id %}" class="category-link">
+            <li class="category-item">
+                {{ category.name }}
+            </li>
+        </a>
+    {% empty %}
+        <li class="empty-category">Каталог пуст.</li>
+    {% endfor %}
+</ul>
+
+<style>
+    .custom-page-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .custom-category-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .category-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #b77813;
+        border-radius: 4px;
+        background-color: #e8a02d;
+        transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+    .category-item:hover {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .category-link, .category-link:hover {
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-category {
+        font-style: italic;
+        color: #888;
+    }
+</style>
+{% endblock %}

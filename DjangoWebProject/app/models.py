@@ -35,7 +35,7 @@ admin.site.register(Blog)
 class Comment(models.Model):
     text = models.TextField(verbose_name = "Текст комментарий")
     date = models.DateTimeField(default = datetime.now(), db_index = True, verbose_name = "Дата комментария")
-    author = models.ForeignKey(User, on_delete = models.CASCADE, verbose_name = "Авторк Комментария")
+    author = models.ForeignKey(User, on_delete = models.CASCADE, verbose_name = "Автор комментария")
     post = models.ForeignKey(Blog, on_delete = models.CASCADE, verbose_name = "Статья комментария")
     # Методы класса:
     def __str__(self):
@@ -48,3 +48,78 @@ class Comment(models.Model):
         verbose_name_plural = "Комментарии к статье блога"
 
 admin.site.register(Comment)
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название категории")
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+admin.site.register(Category)
+
+class Product(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название продукта")
+    description = models.TextField(verbose_name="Краткое описание")
+    content = models.TextField(verbose_name="Полное описание")
+    image = models.FileField(default = 'temp.jpg', verbose_name = "Путь к картинке")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Продукт"
+        verbose_name_plural = "Продукты"
+
+admin.site.register(Product)
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    order_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая сумма", default=0.00)
+    is_sent = models.BooleanField(default=False, verbose_name="Заказ отправлен")
+
+    def update_total_amount(self):
+        # Calculate the total amount for the order based on related OrderItem instances.
+        total_amount = self.order_items.aggregate(sum('subtotal'))['subtotal__sum'] or 0.00
+        self.total_amount = total_amount
+        self.save()
+
+    def __str__(self):
+        return f"Заказ #{self.id}"
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        permissions = [
+            ("can_make_orders", "Can make orders"),
+            ("can_view_orders", "Can view orders"),
+            ("can_view_all_orders", "Can view all orders"),
+        ]
+
+admin.site.register(Order)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items", verbose_name="Заказ")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма")
+
+    def save(self, *args, **kwargs):
+        # Calculate the subtotal for the order item.
+        self.subtotal = self.product.price * self.quantity
+        super(OrderItem, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.product.name} ({self.quantity} шт.)"
+
+    class Meta:
+        verbose_name = "Элемент заказа"
+        verbose_name_plural = "Элементы заказа"
+
+admin.site.register(OrderItem)

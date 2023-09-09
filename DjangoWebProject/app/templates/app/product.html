@@ -1,0 +1,91 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="product-page">
+    <h1 class="product-title">{{ product.name }}</h1>
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" width="350px">
+    <p class="product-content">Описание: {{ product.content|linebreaksbr }}</p>
+    <p class="product-price">Цена: {{ product.price }} ₽</p>
+    <p class="product-category">Категория: <a href="{% url 'category' product.category.id %}" class="product-category-link">{{ product.category.name }}</a></p>
+    {% if perms.app.can_make_orders %}
+        <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
+    {% else %}
+        <p class="add-to-cart-disabled">Зарегистрируйтесь для добавления в корзину</p>
+    {% endif %}
+</div>
+
+<style>
+    .product-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .product-title {
+        font-size: 24px;
+        color: #e8a02d;
+        margin: 0;
+    }
+
+    .product-image {
+        float: right;
+        border: 1px solid orange;
+        border-radius: 5px;
+        transition: transform 0.6s ease;
+    }
+
+        .product-image:hover {
+            transform: scale(2, 2) translate(-25%, 25%);
+            z-index: 0;
+        }
+
+    .product-content {
+        font-size: 16px;
+        color: #333;
+        margin-top: 10px;
+    }
+
+    .product-price {
+        font-size: 18px;
+        color: #333;
+        margin-top: 10px;
+    }
+
+    .product-category-link {
+        color: #e8a02d;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .product-category-link:hover {
+        color: #333;
+    }
+
+    .add-to-cart-button {
+        background-color: #e8a02d;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .add-to-cart-button:hover {
+        background-color: #b77813;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .add-to-cart-disabled {
+        color: #777;
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
