@@ -4,16 +4,40 @@
 {% block content %}
 <div class="product-page">
     <h1 class="product-title">{{ product.name }}</h1>
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" width="350px">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" width="350">
     <p class="product-content">Описание: {{ product.content|linebreaksbr }}</p>
     <p class="product-price">Цена: {{ product.price }} ₽</p>
     <p class="product-category">Категория: <a href="{% url 'category' product.category.id %}" class="product-category-link">{{ product.category.name }}</a></p>
     {% if perms.app.can_make_orders %}
-        <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
+    <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
     {% else %}
-        <p class="add-to-cart-disabled">Зарегистрируйтесь для добавления в корзину</p>
+    <p class="add-to-cart-disabled">Зарегистрируйтесь для добавления в корзину</p>
     {% endif %}
 </div>
+
+<script>
+$(document).ready(function() {
+    $(".add-to-cart-button").click(function() {
+        var product_id = $(this).data("product-id");
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'add_to_cart' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                product_id: product_id,
+            },
+            success: function(data) {
+                alert(data.message);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Продукт не может быть добавлен в коризну.");
+            }
+        });
+    });
+});
+</script>
 
 <style>
     .product-page {
@@ -61,9 +85,9 @@
         transition: color 0.3s ease;
     }
 
-    .product-category-link:hover {
-        color: #333;
-    }
+        .product-category-link:hover {
+            color: #333;
+        }
 
     .add-to-cart-button {
         background-color: #e8a02d;
@@ -77,11 +101,11 @@
         text-align: center;
     }
 
-    .add-to-cart-button:hover {
-        background-color: #b77813;
-        color: #fff;
-        text-decoration: none;
-    }
+        .add-to-cart-button:hover {
+            background-color: #b77813;
+            color: #fff;
+            text-decoration: none;
+        }
 
     .add-to-cart-disabled {
         color: #777;

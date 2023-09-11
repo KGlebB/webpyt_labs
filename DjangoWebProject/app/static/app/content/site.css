@@ -174,3 +174,31 @@ footer a {
     color: black;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
 }
+
+/* Navbar submenu */
+.submenu {
+    display: none;
+    position: absolute;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 6px 16px 0 #22222222;
+}
+
+    .submenu li {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        list-style-type: none;
+    }
+
+        .submenu li:last-child {
+            border-bottom: none;
+        }
+
+        .submenu li a:hover {
+            text-decoration: none;
+        }
+
+.nav__item--has-submenu:hover .submenu {
+    display: block;
+}

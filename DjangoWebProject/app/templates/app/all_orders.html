@@ -1,0 +1,90 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="orders-page">
+    <h1 class="orders-title">Все заказы</h1>
+
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Заказ</th>
+                <th>Пользователь</th>
+                <th>Дата заказа</th>
+                <th>Общая сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><a href="#">Заказ #{{ order.id }}</a></td>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>{{ order.total_amount }} ₽</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Нет заказов.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .orders-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .orders-title {
+        font-size: 24px;
+        color: #e8a02d;
+        margin: 0;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .orders-table th {
+            background-color: #e8a02d;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .orders-table a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+            .orders-table a:hover {
+                text-decoration: underline;
+            }
+
+        .orders-table td:nth-child(5) {
+            color: #333;
+            font-weight: bold;
+        }
+
+    .no-orders-message {
+        font-size: 16px;
+        color: #777;
+        text-align: center;
+    }
+</style>
+
+{% endblock %}

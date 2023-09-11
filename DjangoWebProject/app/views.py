@@ -4,15 +4,18 @@ Definition of views.
 
 from datetime import datetime
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpRequest
-
+from django.http import HttpRequest, JsonResponse
+from django.views.decorators.http import require_POST
 from.forms import FeedbackForm
+
 from.forms import CommentForm
 from.forms import BlogForm
 from django.contrib.auth.forms import UserCreationForm
 
-from.models import Blog, Category, Product
+from.models import Blog, Category, Order, OrderItem, Product
 from.models import Comment
+
+from decimal import Decimal
 
 def home(request):
     """Renders the home page."""
@@ -248,6 +251,89 @@ def product(request, product_id):
         'app/product.html',
         {
             'product': product,
+            'year': datetime.now().year,
+        }
+    )
+
+def cart(request):
+    user = request.user
+    try:
+        active_order = Order.objects.get(user=user, is_sent=False)
+    except Order.DoesNotExist:
+        active_order = None
+    if active_order:
+        cart_items = active_order.order_items.all()
+        total_price = sum(item.subtotal for item in cart_items)
+    else:
+        cart_items = []
+        total_price = 0.00
+    return render(
+        request,
+        'app/cart.html',
+        {
+            'cart_items': cart_items,
+            'total_price': total_price,
+            'year': datetime.now().year,
+        }
+    )
+
+def add_to_cart(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        quantity = 1
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error': 'Продукт не найден'}, status=400)
+        user = request.user
+        active_order, created = Order.objects.get_or_create(user=user, is_sent=False)
+        order_item, created = OrderItem.objects.get_or_create(order=active_order, product=product)
+        if not created:
+            order_item.quantity += quantity
+        order_item.save()
+        return JsonResponse({'message': 'Продукт добавлен в корзину'})
+
+def remove_from_cart(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        try:
+            order_item = OrderItem.objects.get(id=item_id)
+        except OrderItem.DoesNotExist:
+            return JsonResponse({'error': 'Продукт не найден'}, status=400)
+        if order_item.quantity > 1:
+            order_item.quantity -= 1
+            order_item.save()
+        else:
+            order_item.delete()
+        return JsonResponse({'message': 'Продукт удалён из корзины'})
+
+def checkout(request):
+    user = request.user
+    try:
+        active_order = Order.objects.get(user=user, is_sent=False)
+        active_order.is_sent = True
+        cart_items = active_order.order_items.all()
+        active_order.total_amount = sum(item.subtotal for item in cart_items) # TO-DO total amount is zero
+        active_order.save()
+    except Order.DoesNotExist:
+        pass
+    return render(request, 'app/checkout.html')
+
+def orders(request):
+    if request.user.has_perm('app.can_view_all_orders'):
+        orders = Order.objects.filter(is_sent=True)
+        template_name = 'app/all_orders.html'
+    elif request.user.has_perm('app.can_view_orders'):
+        orders = Order.objects.filter(user=request.user, is_sent=True)
+        template_name = 'app/user_orders.html'
+    else:
+        orders = None
+        template_name = 'app/index.html'
+    return render(
+        request,
+        template_name,
+        {
+            'orders': orders, 
             'year': datetime.now().year,
         }
     )

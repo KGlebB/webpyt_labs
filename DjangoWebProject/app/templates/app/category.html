@@ -13,15 +13,38 @@
             <p class="product-price">{{ product.price }} ₽</p>
         </a>
         {% if perms.app.can_make_orders %}
-            <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
+        <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
         {% else %}
-            <a class="add-to-cart-disabled" href="#">Зарегистрируйтесь для добавления в корзину</a>
+        <a class="add-to-cart-disabled" href="#">Зарегистрируйтесь для добавления в корзину</a>
         {% endif %}
     </div>
     {% empty %}
     <p class="no-products">Нет товаров.</p>
     {% endfor %}
 </div>
+
+<script>
+$(document).ready(function() {
+    $(".add-to-cart-button").click(function() {
+        var product_id = $(this).data("product-id");
+        $.ajax({
+            type: "POST",
+            url: "{% url 'add_to_cart' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                product_id: product_id,
+            },
+            success: function(data) {
+                alert(data.message);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Продукт не может быть добавлен в коризну.");
+            }
+        });
+    });
+});
+</script>
 
 <style>
     .product-list {

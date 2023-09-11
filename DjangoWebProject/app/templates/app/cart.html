@@ -1,0 +1,129 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="product-page">
+    <h1 class="product-title">Корзина</h1>
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Наименование</th>
+                <th>Количество</th>
+                <th>Цена за штуку</th>
+                <th>Сумма</th>
+                <th>Удалить</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }} ₽</td>
+                <td>{{ item.subtotal }} ₽</td>
+                <td>
+                    <button class="remove-from-cart-button" data-item-id="{{ item.id }}">Удалить</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="total-price">Итого: {{ total_price }} ₽</p>
+    <button class="checkout-button" onclick="window.location.href='{% url 'checkout' %}'">Оформить заказ</button>
+</div>
+
+<script>
+$(document).ready(function() {
+    $(".remove-from-cart-button").click(function() {
+        var item_id = $(this).data("item-id");
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'remove_from_cart' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                item_id: item_id,
+            },
+            success: function(data) {
+                alert(data.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Продукт не может быть удален из корзины.");
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    .product-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .product-title {
+        font-size: 24px;
+        color: #e8a02d;
+        margin: 0;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .cart-table th, .cart-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .cart-table th {
+            background-color: #e8a02d;
+            color: #fff;
+            font-weight: bold;
+        }
+
+    .remove-from-cart-button {
+        background-color: #e8a02d;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .remove-from-cart-button:hover {
+            background-color: #b77813;
+        }
+
+    .total-price {
+        font-size: 18px;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    .checkout-button {
+        background-color: #e8a02d;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+        .checkout-button:hover {
+            background-color: #b77813;
+        }
+</style>
+{% endblock %}

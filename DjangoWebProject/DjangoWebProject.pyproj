@@ -66,6 +66,13 @@
     <Content Include="app\static\app\content\video1.mp4" />
     <Content Include="app\static\app\content\video2.mp4" />
     <Content Include="app\static\app\content\vk-logo.png" />
+    <Content Include="app\templates\app\all_orders.html" />
+    <Content Include="app\templates\app\cart.html" />
+    <Content Include="app\templates\app\catalog.html" />
+    <Content Include="app\templates\app\category.html" />
+    <Content Include="app\templates\app\checkout.html" />
+    <Content Include="app\templates\app\product.html" />
+    <Content Include="app\templates\app\user_orders.html" />
     <Content Include="app\templates\app\videopost.html" />
     <Content Include="app\templates\app\newpost.html" />
     <Content Include="app\templates\app\blogpost.html" />
