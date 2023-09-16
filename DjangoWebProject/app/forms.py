@@ -3,7 +3,7 @@ Definition of forms.
 """
 
 from django.db import models
-from.models import Comment
+from.models import Comment, Product
 from.models import Blog
 
 from django import forms
@@ -44,4 +44,17 @@ class BlogForm(forms.ModelForm):
             'description': "Краткое содержаение",
             'content': "Полное содержание",
             'image': "Картинка"
+        }
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('name', 'description', 'content', 'image', 'price', 'category',)
+        labels = {
+            'name': "Название продукта",
+            'description': "Краткое описание",
+            'content': "Полное описание",
+            'image': "Путь к картинке",
+            'price': "Цена",
+            'category': "Категория"
         }

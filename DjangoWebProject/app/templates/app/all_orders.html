@@ -17,7 +17,7 @@
         <tbody>
             {% for order in orders %}
             <tr>
-                <td><a href="#">Заказ #{{ order.id }}</a></td>
+                <td><a href="{% url 'order' order.id %}">Заказ #{{ order.id }}</a></td>
                 <td>{{ order.user.username }}</td>
                 <td>{{ order.order_date }}</td>
                 <td>{{ order.total_amount }} ₽</td>
@@ -63,20 +63,6 @@
         .orders-table th {
             background-color: #e8a02d;
             color: #fff;
-            font-weight: bold;
-        }
-
-        .orders-table a {
-            color: #007BFF;
-            text-decoration: none;
-        }
-
-            .orders-table a:hover {
-                text-decoration: underline;
-            }
-
-        .orders-table td:nth-child(5) {
-            color: #333;
             font-weight: bold;
         }
 

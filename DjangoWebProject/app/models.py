@@ -85,10 +85,14 @@ class Order(models.Model):
     is_sent = models.BooleanField(default=False, verbose_name="Заказ отправлен")
 
     def update_total_amount(self):
-        # Calculate the total amount for the order based on related OrderItem instances.
-        total_amount = self.order_items.aggregate(sum('subtotal'))['subtotal__sum'] or 0.00
+        total_amount = self.order_items.aggregate(sum=models.Sum('subtotal'))['sum'] or 0.00
         self.total_amount = total_amount
-        self.save()
+        if total_amount == 0.00:
+            self.delete()
+            return True
+        else:
+            self.save()
+            return False
 
     def __str__(self):
         return f"Заказ #{self.id}"

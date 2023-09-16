@@ -6,7 +6,7 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_POST
-from.forms import FeedbackForm
+from.forms import FeedbackForm, ProductForm
 
 from.forms import CommentForm
 from.forms import BlogForm
@@ -86,7 +86,7 @@ def blog(request):
         request,
         'app/blog.html',
         {
-            'title':'Блог',
+            'title':'Новости',
             'posts':posts,
             'year':datetime.now().year,
         }
@@ -297,24 +297,68 @@ def remove_from_cart(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
         try:
-            order_item = OrderItem.objects.get(id=item_id)
+            item = OrderItem.objects.get(id=item_id)
         except OrderItem.DoesNotExist:
             return JsonResponse({'error': 'Продукт не найден'}, status=400)
-        if order_item.quantity > 1:
-            order_item.quantity -= 1
-            order_item.save()
-        else:
-            order_item.delete()
-        return JsonResponse({'message': 'Продукт удалён из корзины'})
+        item.delete()
+        order_deleted = item.order.update_total_amount()
+        return JsonResponse({
+            'message': 'Продукт удалён из корзины',
+            'order_deleted': order_deleted
+        })
+
+def increase_quantity(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        try:
+            item = OrderItem.objects.get(id=item_id)
+            item.quantity += 1
+            item.save()
+            item.order.update_total_amount()
+            return JsonResponse({'message': 'Количество увеличено успешно.'})
+        except OrderItem.DoesNotExist:
+            return JsonResponse({'message': 'Продукт не найден.'})
+
+def decrease_quantity(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        try:
+            item = OrderItem.objects.get(id=item_id)
+            if item.quantity > 1:
+                item.quantity -= 1
+                item.save()
+                item.order.update_total_amount()
+                return JsonResponse({'message': 'Количество уменьшено успешно.'})
+            else:
+                item.delete()
+                order_deleted = item.order.update_total_amount()
+                return JsonResponse({
+                    'message': 'Продукт удален из корзины.',
+                    'order_deleted': order_deleted
+                })
+        except OrderItem.DoesNotExist:
+            return JsonResponse({'message': 'Продукт не найден.'})
+
+def delete_order(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        try:
+            order = get_object_or_404(Order, id=order_id)
+            order.delete()
+            return JsonResponse({
+                'message': 'Заказ успешно удален.',
+                'order_deleted': True
+            })
+        except Order.DoesNotExist:
+            return JsonResponse({'message': 'Заказ не найден.'})
 
 def checkout(request):
     user = request.user
     try:
         active_order = Order.objects.get(user=user, is_sent=False)
         active_order.is_sent = True
-        cart_items = active_order.order_items.all()
-        active_order.total_amount = sum(item.subtotal for item in cart_items) # TO-DO total amount is zero
         active_order.save()
+        active_order.update_total_amount()
     except Order.DoesNotExist:
         pass
     return render(request, 'app/checkout.html')
@@ -323,7 +367,7 @@ def orders(request):
     if request.user.has_perm('app.can_view_all_orders'):
         orders = Order.objects.filter(is_sent=True)
         template_name = 'app/all_orders.html'
-    elif request.user.has_perm('app.can_view_orders'):
+    elif request.user.is_authenticated:
         orders = Order.objects.filter(user=request.user, is_sent=True)
         template_name = 'app/user_orders.html'
     else:
@@ -334,6 +378,44 @@ def orders(request):
         template_name,
         {
             'orders': orders, 
+            'year': datetime.now().year,
+        }
+    )
+
+def order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        template_name = 'app/order.html'
+    except Order.DoesNotExist:
+        pass
+    
+    return render(
+        request,
+        template_name,
+        {
+            'order': order,
+            'year': datetime.now().year,
+        }
+    )
+
+def add_product(request):
+    """Renders the add_product page."""
+    assert isinstance(request, HttpRequest)
+
+    if request.method == "POST":
+        product_form = ProductForm(request.POST, request.FILES)
+        if product_form.is_valid():
+            product_form.save()
+            return redirect('catalog')
+    else:
+        product_form = ProductForm()
+
+    return render(
+        request,
+        'app/add_product.html',  # Replace with the template for adding a product.
+        {
+            'product_form': product_form,
+            'title': 'Добавить продукт',
             'year': datetime.now().year,
         }
     )

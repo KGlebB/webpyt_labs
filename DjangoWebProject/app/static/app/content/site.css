@@ -98,7 +98,8 @@ form label {
     font-weight: bold;
 }
 
-form input {
+form input,
+form select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -202,3 +203,20 @@ footer a {
 .nav__item--has-submenu:hover .submenu {
     display: block;
 }
+
+/* a links */
+a {
+    color: #e8a02d;
+}
+
+    a:hover, a:focus {
+        color: #b77813;
+    }
+
+button {
+    background-color: #e8a02d;
+}
+
+    button:hover, button:focus {
+        background-color: #b77813;
+    }

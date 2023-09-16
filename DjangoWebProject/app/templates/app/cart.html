@@ -11,14 +11,20 @@
                 <th>Количество</th>
                 <th>Цена за штуку</th>
                 <th>Сумма</th>
-                <th>Удалить</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
             {% for item in cart_items %}
             <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
+                <td>
+                    <a class="product-link" href="{% url 'product' item.product.id %}">{{ item.product.name }}</a>
+                </td>
+                <td>
+                    <button class="quantity-button decrease-quantity-button" data-item-id="{{ item.id }}">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button class="quantity-button increase-quantity-button" data-item-id="{{ item.id }}">+</button>
+                </td>
                 <td>{{ item.product.price }} ₽</td>
                 <td>{{ item.subtotal }} ₽</td>
                 <td>
@@ -54,6 +60,44 @@ $(document).ready(function() {
             }
         });
     });
+    $(".increase-quantity-button").click(function() {
+        var item_id = $(this).data("item-id");
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'increase_quantity' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                item_id: item_id,
+            },
+            success: function(data) {
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Не удалось увеличить количество.");
+            }
+        });
+    });
+    $(".decrease-quantity-button").click(function() {
+        var item_id = $(this).data("item-id");
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'decrease_quantity' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                item_id: item_id,
+            },
+            success: function(data) {
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Не удалось уменьшить количество.");
+            }
+        });
+    });
 });
 </script>
 
@@ -72,6 +116,20 @@ $(document).ready(function() {
         color: #e8a02d;
         margin: 0;
     }
+
+    .quantity-button {
+        background-color: #e8a02d;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        width: 30px;
+        font-weight: 900;
+    }
+
+        .quantity-button:hover {
+            background-color: #b77813;
+        }
 
     .cart-table {
         width: 100%;

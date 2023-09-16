@@ -8,7 +8,7 @@
     <p class="product-content">Описание: {{ product.content|linebreaksbr }}</p>
     <p class="product-price">Цена: {{ product.price }} ₽</p>
     <p class="product-category">Категория: <a href="{% url 'category' product.category.id %}" class="product-category-link">{{ product.category.name }}</a></p>
-    {% if perms.app.can_make_orders %}
+    {% if user.is_authenticated %}
     <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
     {% else %}
     <p class="add-to-cart-disabled">Зарегистрируйтесь для добавления в корзину</p>

@@ -12,7 +12,7 @@
             <p class="product-description">{{ product.description }}</p>
             <p class="product-price">{{ product.price }} ₽</p>
         </a>
-        {% if perms.app.can_make_orders %}
+        {% if user.is_authenticated %}
         <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
         {% else %}
         <a class="add-to-cart-disabled" href="#">Зарегистрируйтесь для добавления в корзину</a>
