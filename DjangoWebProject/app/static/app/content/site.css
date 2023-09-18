@@ -220,3 +220,38 @@ button {
     button:hover, button:focus {
         background-color: #b77813;
     }
+
+/* Category list */
+
+.category-list {
+    list-style: none;
+    padding: 0;
+}
+
+.category-item {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #b77813;
+    border-radius: 4px;
+    background-color: #e8a02d;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+    .category-item:hover {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+.category-link, .category-link:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.empty-category {
+    font-style: italic;
+    color: #888;
+}
+
+.selected-category {
+    background-color: #b77813;
+}

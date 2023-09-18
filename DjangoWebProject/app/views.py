@@ -232,12 +232,14 @@ def catalog(request):
     )
 
 def category(request, category_id):
+    categories = Category.objects.all()
     category = get_object_or_404(Category, id=category_id)
     products = Product.objects.filter(category=category)
     return render(
         request,
         'app/category.html',
         {
+            'categories': categories,
             'category': category,
             'products': products,
             'year': datetime.now().year,
@@ -245,11 +247,13 @@ def category(request, category_id):
     )
 
 def product(request, product_id):
+    categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
     return render(
         request,
         'app/product.html',
         {
+            'categories': categories,
             'product': product,
             'year': datetime.now().year,
         }
@@ -388,7 +392,6 @@ def order(request, order_id):
         template_name = 'app/order.html'
     except Order.DoesNotExist:
         pass
-    
     return render(
         request,
         template_name,
@@ -399,7 +402,6 @@ def order(request, order_id):
     )
 
 def add_product(request):
-    """Renders the add_product page."""
     assert isinstance(request, HttpRequest)
 
     if request.method == "POST":
@@ -409,10 +411,9 @@ def add_product(request):
             return redirect('catalog')
     else:
         product_form = ProductForm()
-
     return render(
         request,
-        'app/add_product.html',  # Replace with the template for adding a product.
+        'app/add_product.html',
         {
             'product_form': product_form,
             'title': 'Добавить продукт',
