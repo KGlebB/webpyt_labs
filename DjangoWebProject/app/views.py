@@ -1,4 +1,4 @@
-﻿"""
+"""
 Definition of views.
 """
 
@@ -284,12 +284,14 @@ def cart(request):
 def add_to_cart(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)  
         quantity = 1
         try:
             product = Product.objects.get(id=product_id)
         except Product.DoesNotExist:
             return JsonResponse({'error': 'Продукт не найден'}, status=400)
-        user = request.user
         active_order, created = Order.objects.get_or_create(user=user, is_sent=False)
         order_item, created = OrderItem.objects.get_or_create(order=active_order, product=product)
         if not created:
@@ -300,10 +302,15 @@ def add_to_cart(request):
 def remove_from_cart(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)
         try:
             item = OrderItem.objects.get(id=item_id)
         except OrderItem.DoesNotExist:
             return JsonResponse({'error': 'Продукт не найден'}, status=400)
+        if not (user.has_perm('app.can_view_all_orders') or item.order.user == user):
+            return JsonResponse({'error': 'Недостаточно прав'}, status=403)
         item.delete()
         order_deleted = item.order.update_total_amount()
         return JsonResponse({
@@ -314,8 +321,13 @@ def remove_from_cart(request):
 def increase_quantity(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)
         try:
             item = OrderItem.objects.get(id=item_id)
+            if not (user.has_perm('app.can_view_all_orders') or item.order.user == user):
+                return JsonResponse({'error': 'Недостаточно прав'}, status=403)
             item.quantity += 1
             item.save()
             item.order.update_total_amount()
@@ -326,8 +338,13 @@ def increase_quantity(request):
 def decrease_quantity(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)
         try:
             item = OrderItem.objects.get(id=item_id)
+            if not (user.has_perm('app.can_view_all_orders') or item.order.user == user):
+                return JsonResponse({'error': 'Недостаточно прав'}, status=403)
             if item.quantity > 1:
                 item.quantity -= 1
                 item.save()
@@ -346,6 +363,11 @@ def decrease_quantity(request):
 def delete_order(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)
+        if not user.has_perm('app.can_view_all_orders'):
+            return JsonResponse({'error': 'Недостаточно прав'}, status=403)
         try:
             order = get_object_or_404(Order, id=order_id)
             order.delete()
