@@ -24,9 +24,11 @@
             <div class="product-item">
                 <a class="product-link" href="{% url 'product' product.id %}">
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-                    <p class="product-name">{{ product.name }}</p>
-                    <p class="product-description">{{ product.description }}</p>
-                    <p class="product-price">{{ product.price }} ₽</p>
+                    <div class="product-content">
+                        <p class="product-name">{{ product.name }}</p>
+                        <p class="product-description">{{ product.description }}</p>
+                        <p class="product-price">{{ product.price }} ₽</p>
+                    </div>
                 </a>
                 {% if user.is_authenticated %}
                 <button class="add-to-cart-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
@@ -93,11 +95,36 @@ $(document).ready(function() {
             transform: scale(1.05);
         }
 
+@media (max-width: 768px) {
+    .product-item {
+        width: 100%;
+    }
+}
+
     .product-image {
         border-radius: 8px;
         max-width: 100%;
         height: auto;
     }
+
+@media (max-width: 768px) {
+    .product-link {
+        display: flex;
+    }
+
+    .product-image {
+        max-height: 120px;
+        float: left;
+    }
+
+    .product-content {
+        padding-left: 8px;
+    }
+
+    p {
+        font-size: 12px;
+    }
+}
 
     .product-name {
         color: #333;

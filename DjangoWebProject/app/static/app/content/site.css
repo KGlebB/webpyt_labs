@@ -164,6 +164,13 @@ footer a {
     background-color: transparent;
 }
 
+.icon-bar {
+    background-color: #ff6700;
+}
+
+.navbar-toggle:focus, .navbar-toggle:hover {
+    background-color: transparent;
+}
 /* Carousel styles */
 .carousel-inner > .item > img, .carousel-inner > .item > a > img {
     height: 600px;
@@ -202,6 +209,26 @@ footer a {
 
 .nav__item--has-submenu:hover .submenu {
     display: block;
+}
+
+@media (max-width: 768px) {
+    .submenu {
+        display: unset;
+        position: unset;
+        padding: unset;
+        background-color: unset;
+        border-radius: unset;
+        box-shadow: unset;
+    }
+    
+    .submenu li {
+        border-bottom: unset;
+    }
+
+    .submenu a.nav__item-link {
+        margin-left: 20px;
+        display: block;
+    }
 }
 
 /* a links */
