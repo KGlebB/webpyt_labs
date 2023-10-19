@@ -262,6 +262,7 @@ button {
     border-radius: 4px;
     background-color: #e8a02d;
     transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
     .category-item:hover {
@@ -280,5 +281,27 @@ button {
 }
 
 .selected-category {
+    background-color: #b77813;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: lightgray;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #e8a02d;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
     background-color: #b77813;
 }

@@ -78,11 +78,25 @@ class Product(models.Model):
 
 admin.site.register(Product)
 
+class OrderStatus(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название статуса")
+    color = models.CharField(max_length=10, verbose_name="Фоновый цвет статуса")
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Статус заказа"
+        verbose_name_plural = "Статусы заказов"
+
+admin.site.register(OrderStatus)
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     order_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая сумма", default=0.00)
     is_sent = models.BooleanField(default=False, verbose_name="Заказ отправлен")
+    status = models.ForeignKey(OrderStatus, default=1, on_delete=models.SET_DEFAULT, verbose_name="Статус")
 
     def update_total_amount(self):
         total_amount = self.order_items.aggregate(sum=models.Sum('subtotal'))['sum'] or 0.00

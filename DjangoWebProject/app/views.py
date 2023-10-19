@@ -12,10 +12,10 @@ from.forms import CommentForm
 from.forms import BlogForm
 from django.contrib.auth.forms import UserCreationForm
 
-from.models import Blog, Category, Order, OrderItem, Product
+from.models import Blog, Category, Order, OrderItem, OrderStatus, Product
 from.models import Comment
 
-from decimal import Decimal
+from django.core.exceptions import PermissionDenied
 
 def home(request):
     """Renders the home page."""
@@ -378,6 +378,26 @@ def delete_order(request):
         except Order.DoesNotExist:
             return JsonResponse({'message': 'Заказ не найден.'})
 
+
+def update_status(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        status_id = request.POST.get('status_id')
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован'}, status=401)
+        if not user.has_perm('app.can_view_all_orders'):
+            return JsonResponse({'error': 'Недостаточно прав'}, status=403)
+        try:
+            order = get_object_or_404(Order, id=order_id)
+            order.status = get_object_or_404(OrderStatus, id=status_id)
+            order.save()
+            return JsonResponse({
+                'message': 'Статус обновлён.',
+            })
+        except Order.DoesNotExist:
+            return JsonResponse({'message': 'Заказ/статус не найден.'})
+
 def checkout(request):
     user = request.user
     try:
@@ -414,12 +434,17 @@ def order(request, order_id):
         template_name = 'app/order.html'
     except Order.DoesNotExist:
         pass
+    user = request.user
+    if not user.is_authenticated:
+        raise PermissionDenied()
+    statuses = OrderStatus.objects.all()
     return render(
         request,
         template_name,
         {
             'order': order,
             'year': datetime.now().year,
+            'statuses': statuses,
         }
     )
 

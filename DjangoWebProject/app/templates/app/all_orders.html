@@ -12,6 +12,7 @@
                 <th>Пользователь</th>
                 <th>Дата заказа</th>
                 <th>Общая сумма</th>
+                <th>Статус</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,7 @@
                 <td>{{ order.user.username }}</td>
                 <td>{{ order.order_date }}</td>
                 <td>{{ order.total_amount }} ₽</td>
+                <td><p class="order-status" style="background-color: {{ order.status.color }}">{{ order.status.name }}</p></td>
             </tr>
             {% empty %}
             <tr>
@@ -37,7 +39,7 @@
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
         overflow-x: auto;
     }
@@ -66,6 +68,14 @@
             color: #fff;
             font-weight: bold;
         }
+
+    .order-status {
+        display: inline-block;
+        font-weight: 700;
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
 
     .no-orders-message {
         font-size: 16px;

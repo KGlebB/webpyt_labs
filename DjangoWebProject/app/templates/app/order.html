@@ -10,7 +10,31 @@
         <p><strong>Пользователь:</strong> {{ order.user.username }}</p>
         <p><strong>Дата заказа:</strong> {{ order.order_date }}</p>
         <p><strong>Общая сумма:</strong> {{ order.total_amount }} ₽</p>
+        <p>
+            <strong>Статус:</strong>
+            {% if not perms.app.can_view_all_orders %}
+            <span class="order-status" style="background-color: {{ order.status.color }}">{{ order.status.name }}</span>
+            {% endif %}
+        </p>
     </div>
+    {% if perms.app.can_view_all_orders %}
+        <div class="status-list">
+            {% for status in statuses %}
+                {% if status.id == order.status.id %}
+                <p
+                    class="order-status"
+                    style="background-color: {{ status.color }};"
+                >{{ status.name }}</p>
+                {% else %}
+                <p
+                    class="update_status order-status order-status--unchoiced"
+                    data-status-id="{{ status.id }}"
+                >{{ status.name }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <button class="delete-order-button">Удалить заказ</button>
 </div>
 
@@ -141,6 +165,26 @@ $(document).ready(function() {
             }
         });
     });
+    $(".update_status").click(function() {
+        var status_id = $(this).data("status-id");
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'update_status' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                order_id: '{{ order.id }}',
+                status_id: status_id,
+            },
+            success: function(data) {
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error: Не удалось обновить статус.");
+            }
+        });
+    });
 });
 </script>
 
@@ -150,7 +194,7 @@ $(document).ready(function() {
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
     }
 
@@ -226,6 +270,30 @@ $(document).ready(function() {
         .remove-from-cart-button:hover {
             background-color: #b77813;
         }
+
+    .status-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center
+    }
+
+    .order-status {
+        margin: 2px;
+        display: inline-block;
+        font-weight: 700;
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .order-status:hover {
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .order-status--unchoiced {
+        background-color: #ccc;
+    }
 </style>
 
 {% endblock %}
