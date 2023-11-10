@@ -18,24 +18,22 @@
         </p>
     </div>
     {% if perms.app.can_view_all_orders %}
-        <div class="status-list">
-            {% for status in statuses %}
-                {% if status.id == order.status.id %}
-                <p
-                    class="order-status"
-                    style="background-color: {{ status.color }};"
-                >{{ status.name }}</p>
-                {% else %}
-                <p
-                    class="update_status order-status order-status--unchoiced"
-                    data-status-id="{{ status.id }}"
-                >{{ status.name }}</p>
-                {% endif %}
-            {% endfor %}
-        </div>
+    <div class="status-list">
+        {% for status in statuses %}
+        {% if status.id == order.status.id %}
+        <p class="order-status"
+           style="background-color: {{ status.color }};">{{ status.name }}</p>
+        {% else %}
+        <p class="update_status order-status order-status--unchoiced"
+           data-status-id="{{ status.id }}">{{ status.name }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
     {% endif %}
 
+    {% if not perms.app.can_view_all_orders %}
     <button class="delete-order-button">Удалить заказ</button>
+    {% endif %}
 </div>
 
 <div class="order-items">
@@ -48,7 +46,9 @@
               <th>Количество</th>
               <th>Цена за штуку</th>
               <th>Сумма</th>
+              {% if not perms.app.can_view_all_orders %}
               <th>Действия</th>
+              {% endif %}
           </tr>
       </thead>
       <tbody>
@@ -58,15 +58,21 @@
                   <a class="product-link" href="{% url 'product' item.product.id %}">{{ item.product.name }}</a>
               </td>
               <td>
+                  {% if not perms.app.can_view_all_orders %}
                   <button class="quantity-button decrease-quantity-button" data-item-id="{{ item.id }}">−</button>
                   <span>{{ item.quantity }}</span>
                   <button class="quantity-button increase-quantity-button" data-item-id="{{ item.id }}">+</button>
+                  {% else %}
+                  <span>{{ item.quantity }}</span>
+                  {% endif %}
               </td>
               <td>{{ item.product.price }} ₽</td>
               <td>{{ item.subtotal }} ₽</td>
+              {% if not perms.app.can_view_all_orders %}
               <td>
                   <button class="remove-from-cart-button" data-item-id="{{ item.id }}">Удалить</button>
               </td>
+              {% endif %}
           </tr>
           {% endfor %}
       </tbody>
