@@ -1,0 +1,30 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="error-block">
+    <h2>{{ info }}</h2>
+    <a class="button-return" href="/">Перейти на главную</a>
+</div>
+
+<style>
+    .error-block {
+        text-align: center;
+    }
+
+    .button-return {
+        display: inline-block;
+        background-color: black;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin: 15px auto;
+    }
+        .button-return:hover, .button-return:focus {
+            cursor: pointer;
+            background-color: gray;
+        }
+</style>
+
+{% endblock %}
