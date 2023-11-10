@@ -18,7 +18,7 @@
         <tbody>
             {% for order in orders %}
             <tr>
-                <td><a href="#">Заказ #{{ order.id }}</a></td>
+                <td><a href="{% url 'order' order.id %}">Заказ #{{ order.id }}</a></td>
                 <td>{{ order.order_date|date:"d.m.Y H:i:s" }}</td>
                 <td>{{ order.total_amount }} ₽</td>
                 <td>{{ order.status.name }}</td>
