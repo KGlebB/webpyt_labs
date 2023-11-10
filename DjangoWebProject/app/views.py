@@ -467,3 +467,33 @@ def add_product(request):
             'year': datetime.now().year,
         }
     )
+
+def error_403(request, exception):
+    return render(
+        request,
+        'app/error.html',
+        {
+            'year': datetime.now().year,
+            'info': 'Нет доступа',
+        }
+    )
+
+def error_404(request, exception):
+    return render(
+        request,
+        'app/error.html',
+        {
+            'year': datetime.now().year,
+            'info': 'Страница не найдена',
+        }
+    )
+
+def error_500(request):
+    return render(
+        request,
+        'app/error.html',
+        {
+            'year': datetime.now().year,
+            'info': 'Нет доступа',
+        }
+    )
